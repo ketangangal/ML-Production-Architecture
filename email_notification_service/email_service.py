@@ -32,6 +32,9 @@ class EmailSender:
             print("Email sent")
         except Exception as e:
             raise e
+    @classmethod
+    def default(self):
+        pass
 
 
 # if __name__ == "__main__":

@@ -1,0 +1,27 @@
+feature_store:
+  bucket_name: featurestorek10
+  file_name: HeartDiseaseTrain-Test.csv
+
+model_registry:
+  bucket_name: modelregistryk10
+  test_folder: testing
+  prod_folder: production
+  zip_file : artifacts
+  artifcats:
+    - model.pkl
+    - encoder.pkl
+    - scaler.pkl
+
+email_params:
+  sender_email: ketangangal98@gmail.com
+  receiver_email: ketangangal98@gmail.com
+  application_key:
+  train_message : "Model Trained and successfully Registered"
+  test_message : "Model Test and successfully shifted into Production"
+  endpoint_message: "Endpoint updated"
+
+
+
+
+
+

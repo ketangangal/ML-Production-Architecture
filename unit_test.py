@@ -1,5 +1,5 @@
-from aws_connection.service import FeatureStoreConnection
-from aws_connection.service import ModelRegistryConnection
+from aws_feature_store.feature_store import FeatureStoreConnection
+from aws_model_registry.model_registry import ModelRegistryConnection
 from data_preprocessing_service.preprocessing import Preprocessing
 from email_notification_service.email_service import EmailSender
 from sklearn.metrics import accuracy_score

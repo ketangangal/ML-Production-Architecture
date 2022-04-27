@@ -1,11 +1,9 @@
-from fastapi import FastAPI, Form, Request
-from aws_connection.service import FeatureStoreConnection
-from data_preprocessing_service.preprocessing import Preprocessing
+from fastapi import FastAPI,Request
 import joblib
 import pickle as pkl
 import uvicorn
 import numpy as np
-import requests
+
 app = FastAPI()
 
 # create global transforms

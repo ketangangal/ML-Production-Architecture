@@ -1,7 +1,5 @@
 import requests
-from aws_connection.service import FeatureStoreConnection
-import pandas as pd
-import json
+from aws_feature_store.feature_store import FeatureStoreConnection
 
 print('request')
 response = requests.get("http://localhost:8081/")
