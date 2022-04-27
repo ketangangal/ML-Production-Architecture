@@ -2,44 +2,47 @@ from aws_connection.service import FeatureStoreConnection
 from aws_connection.service import ModelRegistryConnection
 from data_preprocessing_service.preprocessing import Preprocessing
 from email_notification_service.email_service import EmailSender
+from sklearn.metrics import accuracy_score
 
-from sklearn.ensemble import RandomForestClassifier
 
-
-def train_model():
-    # Get Data from Feature Store
+def unit_test():
     feature_data = FeatureStoreConnection(bucket_name="featurestorek10", key="HeartDiseaseTrain-Test.csv")
     data = feature_data.get_features_from_s3()
 
     #  Preprocessing on Data
     preprocess = Preprocessing(data, "target", test_size=0.30, random_state=101)
-    X_train, X_test, y_train, y_test = preprocess.preprocess()
+    _, X_test, _, y_test = preprocess.preprocess()
 
-    # Model Training
-    model = RandomForestClassifier(n_estimators=120)
-    model.fit(X_train, y_train)
-    prob = model.predict_proba(X_test)[:, 1]
-    #print("Prediction Results :",prob)
-
-    # Store model pickle
-    path = r"F:\Production\ML-Production-Architecture\model_training\artifacts\model.pkl"
-
-    # Create Model pkl and upload to testing registry
+    # Fetch model from s3 testing folder
     registry = ModelRegistryConnection("modelregistryk10", "model.pkl", "model.pkl")
-    registry.upload_model_in_test(model,path)
+    newModel = registry.get_model_from_testing()
+    prodModel = registry.get_model_from_prod()
 
+    new_model_result = newModel.predict(X_test)
+    prod_model_result = prodModel.predict(X_test)
+
+    new_model_score = accuracy_score(y_test,new_model_result)
+    prod_model_score = accuracy_score(y_test, prod_model_result)
+
+    print("New Model Accuracy", new_model_score)
+    print("prod Model Accuracy", prod_model_score)
+
+    if new_model_score > prod_model_score:
+        status = registry.move_model_test_to_prod()
+    else:
+        status = "Production Model Accuracy is More so no movement"
+    print(status)
     # Email Notification
     # sender_email = "ketangangal98@gmail.com"
     # receiver_email = "ketangangal98@gmail.com"
     # application_key =
-    # message = "Model successfully registered"
+    # message = status
     #
     # mail = EmailSender(sender_email, application_key, receiver_email, message)
     # mail.send_email()
-    return "Process Completed"
+    return True
 
 
 if __name__ == "__main__":
-    response = train_model()
+    response = unit_test()
     print(response)
-
