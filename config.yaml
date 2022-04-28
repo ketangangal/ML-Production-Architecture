@@ -6,8 +6,8 @@ model_registry:
   bucket_name: modelregistryk10
   test_folder: testing
   prod_folder: production
-  zip_file : artifacts
-  artifcats:
+  package_name : artifacts
+  zip_files:
     - model.pkl
     - encoder.pkl
     - scaler.pkl
@@ -20,6 +20,11 @@ email_params:
   test_message : "Model Test and successfully shifted into Production"
   endpoint_message: "Endpoint updated"
 
+
+ml_params:
+  test_size: 0.33
+  random_state: 101
+  label: target
 
 
 
