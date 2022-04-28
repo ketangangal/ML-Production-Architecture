@@ -1,7 +1,7 @@
 import yaml
 
 
-def read_config(config_path="model_training/utils/config.yaml"):
+def read_config(config_path="config.yaml"):
     with open(config_path) as config_file:
         content = yaml.safe_load(config_file)
 
