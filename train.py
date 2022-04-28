@@ -16,12 +16,11 @@ class TrainModel:
         self.feature_store = self.config["feature_store"]["bucket_name"]
         self.raw_data_key = self.config["feature_store"]["file_name"]
         self.model_registry = self.config["model_registry"]["bucket_name"]
-        self.label = None
-        self.test_size = None
-        self.random_state = None
-        self.message = None
-        self.zip_files = None
-        self.package_name = None
+        self.zip_files = self.config["model_registry"]["zip_files"]
+        self.package_name = self.config["model_registry"]["package_name"]
+        self.label = self.config["ml_params"]["label"]
+        self.test_size = self.config["ml_params"]["test_size"]
+        self.random_state = self.config["ml_params"]["random_state"]
 
     @staticmethod
     def model(X_train, X_test, y_train, y_test):
@@ -30,8 +29,9 @@ class TrainModel:
         model.fit(X_train, y_train)
 
         # Prediction
-        prob = model.predict_proba(X_test)[:, 1]
-
+        prob = model.predict(X_test)
+        print(prob)
+        print(y_test)
         # Metrics Calculation
         accuracy = accuracy_score(y_test, prob)
         f1 = f1_score(y_test, prob)
@@ -43,16 +43,22 @@ class TrainModel:
         return accuracy, f1, recall
 
     def send_email(self):
-        mail = EmailSender(sender_email=self.config,application_key=self.config,
-                           receiver_email=self.config,message=self.message)
+        mail = EmailSender(sender_email=self.config["email_params"]["sender_email"],
+                           application_key=self.config["email_params"]["application_key"],
+                           receiver_email=self.config["email_params"]["receiver_email"],
+                           message=self.config["email_params"]["train_message"])
         mail.send_email()
 
     def train(self):
         feature_data = FeatureStoreConnection(bucket_name=self.feature_store,key=self.raw_data_key)
         raw_data = feature_data.get_features_from_s3()
 
+        print("Data fetched from feature Store")
+
         preprocess = Preprocessing(df=raw_data,label=self.label,test_size=self.test_size,random_state=self.random_state)
         X_train, X_test, y_train, y_test = preprocess.preprocess()
+        print(y_train.unique(), y_test.unique())
+        print("Preprocessing Completed!")
 
         accuracy, f1, recall = self.model(X_train, X_test, y_train, y_test)
 
@@ -64,7 +70,7 @@ class TrainModel:
                                            package_name=self.package_name)
         registry.upload_model_in_test()
 
-        self.send_email()
+        #self.send_email()
 
         return "Process Completed"
 

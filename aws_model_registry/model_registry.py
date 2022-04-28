@@ -20,13 +20,13 @@ class ModelRegistryConnection:
         """ Pickle object upload in testing"""
         try:
             folder = tarfile.open(self.zip_file_path, "w:gz")
-
+            print(self.zip_file_path)
             for name in self.zip_files:
-                folder.add(os.path.join(from_root(),"artifacts",name))
+                folder.add(os.path.join(from_root(),"artifacts",name),name)
                 os.remove(os.path.join(from_root(),"artifacts",name))
             folder.close()
 
-            self.s3.meta.client.upload_file(self.zip_file_path, self.bucket_name, self.testing_key)
+            self.s3.meta.client.upload_file(self.zip_file_path, self.bucket_name, f'{self.testing_key}.tar.gz')
             os.remove(self.zip_file_path)
 
         except Exception as e:
@@ -36,51 +36,41 @@ class ModelRegistryConnection:
         """ Pickle object upload in production"""
         try:
             folder = tarfile.open(self.zip_file_path, "w:gz")
-
+            print(folder)
             for name in self.zip_files:
-                folder.add(os.path.join(from_root(), "artifacts", name))
+                folder.add(os.path.join(from_root(),"artifacts",name),name)
                 os.remove(os.path.join(from_root(), "artifacts", name))
             folder.close()
 
-            self.s3.meta.client.upload_file(self.zip_file_path, self.bucket_name, self.production_key)
+            self.s3.meta.client.upload_file(self.zip_file_path, self.bucket_name, f'{self.production_key}.tar.gz')
             os.remove(self.zip_file_path)
         except Exception as e:
             raise e
 
-    def get_model_from_testing(self):
+    def get_package_from_testing(self):
         zip_file_path = os.path.join(from_root(), "artifacts", f'{self.package_name}.tar.gz')
-        load_model = os.path.join(from_root(), "artifacts", f'{self.zip_files[0]}')
-
-        self.bucket.download_file(self.testing_key,zip_file_path)
-
-        folder = tarfile.open(zip_file_path, "w:gz")
-        folder.extractall()
+        self.bucket.download_file(f'{self.testing_key}.tar.gz',zip_file_path)
+        folder = tarfile.open(zip_file_path)
+        folder.extractall(os.path.join(from_root(), "artifacts"))
         folder.close()
+        os.remove(zip_file_path)
 
-        model = load(load_model)
-        return model
-
-    def get_model_from_prod(self):
+    def get_package_from_prod(self):
         zip_file_path = os.path.join(from_root(), "artifacts", f'{self.package_name}.tar.gz')
-        load_model = os.path.join(from_root(), "artifacts", f'{self.zip_files[0]}')
-
-        self.bucket.download_file(self.production_key, zip_file_path)
-
-        folder = tarfile.open(zip_file_path, "w:gz")
-        folder.extractall()
+        self.bucket.download_file(f'{self.production_key}.tar.gz',zip_file_path)
+        folder = tarfile.open(zip_file_path)
+        folder.extractall(os.path.join(from_root(), "artifacts"))
         folder.close()
-
-        model = load(load_model)
-        return model
+        os.remove(zip_file_path)
 
     def move_model_test_to_prod(self):
         """ Model movement from test to prod registry """
         try:
             copy_source = {
                 'Bucket': self.bucket_name,
-                'Key': self.testing_key
+                'Key': f'{self.testing_key}.tar.gz'
             }
-            self.bucket.copy(copy_source,self.production_key)
+            self.bucket.copy(copy_source,f'{self.production_key}.tar.gz')
             return "Model Moved in Production"
         except Exception as e:
             raise e
