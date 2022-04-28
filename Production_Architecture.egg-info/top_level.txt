@@ -1,0 +1,5 @@
+aws_feature_store
+aws_model_registry
+data_preprocessing_service
+email_notification_service
+utils
