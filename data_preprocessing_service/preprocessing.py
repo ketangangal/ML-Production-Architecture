@@ -46,5 +46,6 @@ class Preprocessing:
         self.__one_hot_encoding()
         X_train, X_test, y_train, y_test = self.__train_test_split()
         X_train, X_test = self.__feature_scaling(X_train, X_test)
+        print(X_train.shape, X_test.shape, y_train.shape, y_test.shape)
         return X_train, X_test, y_train, y_test
 
