@@ -70,7 +70,7 @@ class TrainModel:
                                            package_name=self.package_name)
         registry.upload_model_in_test()
 
-        #self.send_email()
+        self.send_email()
 
         return "Process Completed"
 
