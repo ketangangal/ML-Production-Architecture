@@ -47,13 +47,14 @@ async def predict(request: Request):
     result = {"Result": result.tolist()[0]}
     return result
 
-@app.post('/reload')
-def reload(request: Request):
+@app.get('/reload')
+def reload():
     executor = PrepareEndpoints()
     executor.inference_object_loader()
+    return {"Response": "Updating Model In Prod"}
 
 
 if __name__ == "__main__":
     executor = PrepareEndpoints()
     executor.inference_object_loader()
-    uvicorn.run(app, host="0.0.0.0", port=8081)
+    uvicorn.run(app, host="localhost", port=8081)
