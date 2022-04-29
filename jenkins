@@ -1,0 +1,26 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Model-train') {
+            steps {
+                echo 'Running train Job'
+                build 'Train'
+                 }
+            }
+
+        stage('Model-test') {
+            steps {
+                echo 'Running test job'
+                build 'Test'
+                }
+            }
+
+        stage('Model-endpoint') {
+            steps {
+                echo 'Running Model Endpoint Test'
+                build 'endpoint'
+                }
+            }
+    }
+}

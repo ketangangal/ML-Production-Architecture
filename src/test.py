@@ -5,7 +5,7 @@ from email_notification_service.email_service import EmailSender
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score, recall_score
 from utils.utils import read_config
-
+import requests
 
 class ModelTest:
     def __init__(self):
@@ -18,6 +18,7 @@ class ModelTest:
         self.label = self.config["ml_params"]["label"]
         self.test_size = self.config["ml_params"]["test_size"]
         self.random_state = self.config["ml_params"]["random_state"]
+        self.model_endpoint = "https://9fd463725b81.in.ngrok.io/reload"
 
     def send_email(self):
         mail = EmailSender(sender_email=self.config["email_params"]["sender_email"],
@@ -65,6 +66,8 @@ class ModelTest:
         print("checking condition")
         if f1_test > f1_prod:
             response = registry.move_model_test_to_prod()
+            reload = requests.get(self.model_endpoint)
+            print(reload.text)
             print(response)
         else:
             print("Prod model is More accurate")

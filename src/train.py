@@ -69,8 +69,8 @@ class TrainModel:
         registry = ModelRegistryConnection(bucket_name=self.model_registry,zip_files=self.zip_files,
                                            package_name=self.package_name)
         registry.upload_model_in_test()
-
-        self.send_email()
+        print("Model Registered In the testing...")
+        #self.send_email()
 
         return "Process Completed"
 
@@ -78,3 +78,4 @@ class TrainModel:
 if __name__ == "__main__":
     train_model = TrainModel()
     train_model.train()
+
