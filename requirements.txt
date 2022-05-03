@@ -6,3 +6,4 @@ fastapi==0.75.2
 category-encoders==2.4.0
 uvicorn[standard]
 from-root==1.0.2
+prometheus-client==0.14.1
