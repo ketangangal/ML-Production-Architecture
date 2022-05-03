@@ -1,4 +1,6 @@
 from aws_feature_store.feature_store import FeatureStoreConnection
+from exception.exception import CustomException
+from logging.logging import CustomLogger
 from aws_model_registry.model_registry import ModelRegistryConnection
 from data_preprocessing_service.inference_loader import ObjectLoader
 from email_notification_service.email_service import EmailSender
@@ -6,6 +8,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score, recall_score
 from utils.utils import read_config
 import requests
+
+logger = CustomLogger("logs")
 
 class ModelTest:
     def __init__(self):
@@ -47,32 +51,39 @@ class ModelTest:
         return accuracy, f1, recall
 
     def test(self):
-        feature_data = FeatureStoreConnection(bucket_name=self.feature_store, key=self.raw_data_key)
-        registry = ModelRegistryConnection(self.model_registry, self.zip_files, self.package_name)
-        loader = ObjectLoader()
-        raw_data = feature_data.get_features_from_s3()
-        X_test, y_test = self.additional_preprocess(raw_data)
+        try:
+            feature_data = FeatureStoreConnection(bucket_name=self.feature_store, key=self.raw_data_key)
+            registry = ModelRegistryConnection(self.model_registry, self.zip_files, self.package_name)
+            loader = ObjectLoader()
+            raw_data = feature_data.get_features_from_s3()
+            X_test, y_test = self.additional_preprocess(raw_data)
 
-        registry.get_package_from_testing()
-        test_objects = loader.load_objects()
-        _, f1_test, _ = self.get_predictions(test_objects, X_test, y_test)
-        print(f"Testing objects loaded {test_objects}")
+            registry.get_package_from_testing()
+            test_objects = loader.load_objects()
+            _, f1_test, _ = self.get_predictions(test_objects, X_test, y_test)
+            print(f"Testing objects loaded {test_objects}")
 
-        registry.get_package_from_prod()
-        prod_objects = loader.load_objects()
-        _, f1_prod, _ = self.get_predictions(prod_objects, X_test, y_test)
-        print(f"Production objects loaded {prod_objects}")
+            registry.get_package_from_prod()
+            prod_objects = loader.load_objects()
+            _, f1_prod, _ = self.get_predictions(prod_objects, X_test, y_test)
+            print(f"Production objects loaded {prod_objects}")
 
-        print("checking condition")
-        if f1_test > f1_prod:
-            response = registry.move_model_test_to_prod()
-            reload = requests.get(self.model_endpoint)
-            print(reload.text)
-            print(response)
-        else:
-            print("Prod model is More accurate")
+            print("checking condition")
+            print(f"F1 Score Test {f1_test}")
+            print(f"F1 Score Prod {f1_prod}")
 
-        return True
+            if f1_test > f1_prod:
+                response = registry.move_model_test_to_prod()
+                reload = requests.get(self.model_endpoint)
+                print(reload.text)
+                print(response)
+            else:
+                print("Prod model is More accurate")
+
+            return True
+        except Exception as e:
+            message = CustomException(e, sys)
+            logger.error(message.error_message)
 
 
 if __name__ == "__main__":
