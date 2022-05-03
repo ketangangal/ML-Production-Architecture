@@ -20,7 +20,9 @@ Infrastructure and endpoint monitoring.
 ```
 
 ## Detail Explanation of the Project
+![image](https://user-images.githubusercontent.com/40850370/166426136-7c635c4f-8bfd-4dab-8b4a-1aca754b1d1a.png)
 
+![image](https://user-images.githubusercontent.com/40850370/166426204-17e3f781-6d86-4484-b66c-4025f4ec60f0.png)
 ### Feature Store service 
 
 ### Email Notification
