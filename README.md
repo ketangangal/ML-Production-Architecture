@@ -1,7 +1,8 @@
 ## Problem Statement
 
 ```
-Create an End to End Machine Learning architecture which includes Model Training, Testing and operationalization, 
+Create an End to End Machine Learning architecture which includes 
+Model Training, Testing and operationalization, 
 Infrastructure and endpoint monitoring.
 ```
 
