@@ -37,10 +37,3 @@ class EmailSender:
         pass
 
 
-# if __name__ == "__main__":
-#     sender_email = "ketangangal98@gmail.com"
-#     receiver_email = "ketangangal98@gmail.com"
-#     application_key = "dfdw yazr ckiy pjqu"
-#     message = "Test"
-#     mail = EmailSender(sender_email, application_key, receiver_email, message)
-#     mail.send_email()

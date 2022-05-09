@@ -1,6 +1,7 @@
 import boto3
 import awswrangler as wr
 
+
 class FeatureStoreConnection:
     """
     This class creates connection with aws and performs

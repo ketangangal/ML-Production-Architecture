@@ -5,6 +5,8 @@ Production_Architecture.egg-info/PKG-INFO
 Production_Architecture.egg-info/SOURCES.txt
 Production_Architecture.egg-info/dependency_links.txt
 Production_Architecture.egg-info/top_level.txt
+app_logging/__init__.py
+app_logging/logging.py
 aws_feature_store/__init__.py
 aws_feature_store/feature_store.py
 aws_model_registry/__init__.py
@@ -14,5 +16,14 @@ data_preprocessing_service/inference_loader.py
 data_preprocessing_service/preprocessing.py
 email_notification_service/__init__.py
 email_notification_service/email_service.py
+exception/__init__.py
+exception/exception.py
+monitoring/__init__.py
+monitoring/prometheus.py
+src/__init__.py
+src/api_test.py
+src/endpoint.py
+src/test.py
+src/train.py
 utils/__init__.py
 utils/utils.py

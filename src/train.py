@@ -1,4 +1,4 @@
-from logging.logging import CustomLogger
+from app_logging.logging import CustomLogger
 from exception.exception import CustomException
 from aws_feature_store.feature_store import FeatureStoreConnection
 from aws_model_registry.model_registry import ModelRegistryConnection
@@ -10,8 +10,9 @@ from utils.utils import read_config
 from from_root import from_root
 from joblib import dump
 import os
-
+import sys
 logger = CustomLogger("logs")
+
 
 class TrainModel:
     def __init__(self):
@@ -40,8 +41,8 @@ class TrainModel:
         f1 = f1_score(y_test, prob)
         recall = recall_score(y_test, prob)
 
-        model_path = os.path.join(from_root(),"artifacts","model.pkl")
-        dump(model,model_path)
+        model_path = os.path.join(from_root(), "artifacts", "model.pkl")
+        dump(model, model_path)
 
         return accuracy, f1, recall
 
@@ -54,13 +55,16 @@ class TrainModel:
 
     def train(self):
         try:
-            feature_data = FeatureStoreConnection(bucket_name=self.feature_store,key=self.raw_data_key)
+            feature_data = FeatureStoreConnection(bucket_name=self.feature_store, key=self.raw_data_key)
             raw_data = feature_data.get_features_from_s3()
 
             print("Data fetched from feature Store")
 
-            preprocess = Preprocessing(df=raw_data,label=self.label,test_size=self.test_size,random_state=self.random_state)
+            preprocess = Preprocessing(df=raw_data, label=self.label, test_size=self.test_size,
+                                       random_state=self.random_state)
+
             X_train, X_test, y_train, y_test = preprocess.preprocess()
+
             print(y_train.unique(), y_test.unique())
             print("Preprocessing Completed!")
 
@@ -70,7 +74,7 @@ class TrainModel:
             print(f"f1_score : {f1}")
             print(f"recall_score : {recall}")
 
-            registry = ModelRegistryConnection(bucket_name=self.model_registry,zip_files=self.zip_files,
+            registry = ModelRegistryConnection(bucket_name=self.model_registry, zip_files=self.zip_files,
                                                package_name=self.package_name)
             registry.upload_model_in_test()
             print("Model Registered In the testing...")
@@ -85,4 +89,3 @@ class TrainModel:
 if __name__ == "__main__":
     train_model = TrainModel()
     train_model.train()
-

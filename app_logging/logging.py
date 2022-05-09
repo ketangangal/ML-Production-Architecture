@@ -1,5 +1,7 @@
 import os
 from datetime import datetime
+from from_root import from_root
+
 
 class CustomLogger:
 
@@ -7,7 +9,7 @@ class CustomLogger:
         """
         :param log_file_name: name of the logfile
         """
-        self.logfile = os.path.join(from_root(),"logging", log_file_name + str('.txt'))
+        self.logfile = os.path.join(from_root(), "logging", log_file_name + str('.txt'))
         self.current_date = str(datetime.now())
 
     def info(self, message):

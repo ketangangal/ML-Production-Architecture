@@ -1,9 +1,5 @@
-from prometheus_client import start_http_server, Summary, Counter
-from prometheus_client import make_wsgi_app
-from wsgiref.simple_server import make_server
+from prometheus_client import Summary, Counter, start_http_server
 
-import random
-import time
 
 # Create a metric to track time spent and requests made.
 REQUEST_TIME = Summary('request_processing_seconds', 'Time spent processing request')

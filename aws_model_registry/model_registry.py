@@ -49,7 +49,7 @@ class ModelRegistryConnection:
 
     def get_package_from_testing(self):
         zip_file_path = os.path.join(from_root(), "artifacts", f'{self.package_name}.tar.gz')
-        self.bucket.download_file(f'{self.testing_key}.tar.gz',zip_file_path)
+        self.bucket.download_file(f'{self.testing_key}.tar.gz', zip_file_path)
         folder = tarfile.open(zip_file_path)
         folder.extractall(os.path.join(from_root(), "artifacts"))
         folder.close()

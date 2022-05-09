@@ -1,4 +1,4 @@
-from monitoring.prometheus import REQUEST_TIME, start_http_server, COUNT_p,COUNT_r,COUNT_w
+from monitoring.prometheus import REQUEST_TIME, start_http_server, COUNT_p, COUNT_r, COUNT_w
 from aws_model_registry.model_registry import ModelRegistryConnection
 from data_preprocessing_service.inference_loader import ObjectLoader
 from utils.utils import read_config
@@ -9,6 +9,7 @@ import time
 app = FastAPI()
 
 model, encoder, scaler = None, None, None
+
 
 class PrepareEndpoints:
     def __init__(self):
@@ -33,11 +34,13 @@ class PrepareEndpoints:
         scaler = prod_objects["scaler"]
         model = prod_objects["model"]
 
+
 @REQUEST_TIME.time()
 @app.get('/')
 def invoke():
     COUNT_w.inc()
     return {"Response": "Hello world from Model Endpoint"}
+
 
 @REQUEST_TIME.time()
 @app.post('/predict')
@@ -49,6 +52,7 @@ async def predict(request: Request):
     result = {"Result": result.tolist()[0]}
     COUNT_p.inc()
     return result
+
 
 @REQUEST_TIME.time()
 @app.get('/reload')
